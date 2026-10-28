@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07101e">
+<title>Crash Flight | Demo</title>
+<style>
+:root{color-scheme:dark;--bg:#070f1c;--panel:#101d30;--panel2:#0b1727;--line:#263b56;--text:#f3f7ff;--muted:#9fb1c9;--mint:#4ff0c8;--mint2:#18dcb4;--red:#ff607b;--gold:#ffd16c;--blue:#63b7ff}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,Arial,sans-serif}
+body{background:radial-gradient(ellipse at 50% -10%,#163354 0%,#0a1525 44%,#070f1c 75%)}
+button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.4;cursor:not-allowed}
+.app{max-width:1080px;margin:auto;padding:env(safe-area-inset-top) 14px calc(26px + env(safe-area-inset-bottom))}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 3px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:950;letter-spacing:.7px;font-size:clamp(18px,4vw,25px);color:var(--mint)}
+.logo{display:grid;place-items:center;width:43px;height:43px;border:1px solid #35607c;border-radius:15px;background:linear-gradient(140deg,#204a67,#102137);font-size:24px}
+.head-right{display:flex;align-items:center;gap:8px}.demo-tag{font-size:11px;border:1px solid #2e536c;background:#102a3e;color:#a8e6f2;border-radius:999px;padding:7px 10px;white-space:nowrap}
+.layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(290px,.9fr);gap:14px;align-items:start}
+.panel{background:linear-gradient(150deg,rgba(18,34,54,.97),rgba(11,24,41,.98));border:1px solid var(--line);border-radius:22px;padding:15px;box-shadow:0 14px 35px #0002}
+.game-panel{padding:12px}.sky{height:clamp(270px,48vw,430px);max-height:430px;position:relative;overflow:hidden;border-radius:17px;border:1px solid #203a56;background:radial-gradient(ellipse at 52% 110%,#123e5f 0%,#0b2039 43%,#071321 100%)}
+.stars{position:absolute;inset:0;background-image:radial-gradient(circle,#d9f6ff 1px,transparent 1.6px),radial-gradient(circle,#85d5ff 1px,transparent 1.6px),radial-gradient(circle,#fff 1px,transparent 1.6px);background-size:61px 67px,93px 101px,127px 117px;background-position:4px 11px,31px 29px,64px 47px;opacity:.34}
+.cloud{position:absolute;width:125px;height:32px;border-radius:30px;background:#244660;opacity:.18;filter:blur(4px);left:-160px;top:45px;animation:clouds 14s linear infinite}.cloud.c2{top:120px;width:90px;animation-delay:-4s}.cloud.c3{top:200px;width:160px;animation-delay:-8s}
+@keyframes clouds{to{transform:translateX(950px)}}.curve{position:absolute;left:7%;right:8%;bottom:17%;height:45%;border-bottom:2px solid #50f0c825;border-radius:0 0 0 100%;transform:skewY(-17deg);opacity:.7}
+.status{position:absolute;top:24px;left:12px;right:12px;text-align:center;color:#d5e5f6;font-size:15px;z-index:2}
+.multiplier{position:absolute;top:72px;left:0;right:0;text-align:center;font-weight:950;letter-spacing:-2px;font-size:clamp(48px,10vw,80px);line-height:1.1;color:var(--mint);text-shadow:0 0 35px #4ff0c827;z-index:2}
+.multiplier.crashed{color:var(--red);text-shadow:0 0 35px #ff607b30}
+.plane{position:absolute;left:11%;bottom:13%;z-index:3;font-size:clamp(34px,6vw,47px);filter:drop-shadow(0 0 12px #4ff0c85a);transform:rotate(-10deg);transition:filter .2s}
+.plane.flying{animation:bob .7s ease-in-out infinite alternate}@keyframes bob{to{transform:translateY(-7px) rotate(-6deg)}}
+.trail{position:absolute;left:-78px;top:50%;width:78px;height:3px;background:linear-gradient(90deg,transparent,var(--mint));border-radius:9px;transform:rotate(9deg)}
+.sky-bottom{position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#4ff0c85a,transparent)}
+.roundbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 4px 1px}.round-id{font-size:12px;color:var(--muted)}
+.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid #2c5369;background:#10283b;color:#b1e7ef;padding:7px 10px;border-radius:999px;font-size:11px}.dot{width:7px;height:7px;border-radius:50%;background:var(--mint);box-shadow:0 0 8px var(--mint)}
+.past-rounds{display:flex;gap:7px;overflow:auto;padding:13px 1px 3px;scrollbar-width:thin}
+.past-chip{flex:0 0 auto;border:1px solid #29435e;background:#0a1728;border-radius:9px;padding:7px 10px;font-size:12px;font-weight:800;color:var(--mint)}
+.past-chip.low{color:var(--red)}.past-chip.mid{color:var(--gold)}
+.right-col{display:grid;gap:14px}
+.balance-line{display:flex;justify-content:space-between;gap:10px;align-items:center}.muted{color:var(--muted);font-size:12px}.balance{font-size:clamp(26px,5vw,36px);font-weight:950;letter-spacing:-.7px;margin-top:5px;overflow-wrap:anywhere}.balance small{font-size:13px;color:var(--muted);font-weight:650;letter-spacing:0}
+.state{text-align:left}.state strong{display:block;margin-top:6px;font-size:14px}
+.section-title{font-size:15px;font-weight:850;margin:0 0 14px}
+.label{display:block;font-size:13px;color:#dce7f6;margin:15px 0 7px}
+input,select{width:100%;border:1px solid #304965;background:#071321;color:var(--text);border-radius:12px;padding:13px 12px;outline:none;font-size:16px;min-width:0}
+input:focus,select:focus{border-color:var(--mint);box-shadow:0 0 0 3px #4ff0c814}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:9px}.quick{display:flex;gap:7px;margin-top:8px}.quick button{flex:1;border:1px solid #2a4059;background:#0a1727;color:#b6c7dc;border-radius:9px;padding:7px 4px;font-size:12px;font-weight:750;min-height:34px}
+.btn{width:100%;border:0;border-radius:13px;padding:14px 12px;font-size:16px;font-weight:900;min-height:52px;margin-top:10px}
+.start{background:linear-gradient(135deg,var(--mint),var(--mint2));color:#062019;box-shadow:0 8px 22px #18dcb41b}.cash{background:linear-gradient(135deg,#ffe091,#f4b83c);color:#352506}.secondary{background:#152940;border:1px solid #304963;color:#dce9f8}
+.smallnote{font-size:11px;color:var(--muted);line-height:1.7;margin:12px 2px 0}
+.history-list{display:grid;gap:7px}.history-item{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid #203650;background:#091626;border-radius:12px;padding:10px}
+.hist-name{font-size:12px;font-weight:800}.hist-sub{font-size:10px;color:var(--muted);margin-top:3px}.hist-value{font-size:13px;font-weight:900;white-space:nowrap}.win{color:var(--mint)}.loss{color:var(--red)}.empty{text-align:center;color:var(--muted);font-size:12px;padding:17px 4px}
+.footer{text-align:center;color:#6f849d;font-size:11px;line-height:1.8;padding:18px 12px 4px}
+@media(max-width:760px){.layout{grid-template-columns:1fr}.right-col{grid-template-columns:1fr}.sky{height:clamp(285px,70vw,380px)}.balance{font-size:32px}}
+@media(min-width:761px){.right-col{position:sticky;top:10px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+ <div class="brand"><div class="logo">✈</div><span>CRASH FLIGHT</span></div>
+ <div class="head-right"><span class="demo-tag">نسخة تجريبية</span></div>
+</header>
+<div class="layout">
+ <div class="left-col">
+  <section class="panel game-panel">
+   <div class="sky" id="sky">
+    <div class="stars"></div><div class="cloud"></div><div class="cloud c2"></div><div class="cloud c3"></div><div class="curve" id="curve"></div>
+    <div class="status" id="status">جاهز للإقلاع؟</div><div class="multiplier" id="multiplier">1.00x</div>
+    <div class="plane" id="plane"><span class="trail"></span>✈</div><div class="sky-bottom"></div>
+   </div>
+   <div class="roundbar"><span class="pill"><span class="dot"></span> تجربة محلية</span><span class="round-id" id="roundLabel">الجولة القادمة</span></div>
+   <div class="past-rounds" id="pastRounds"><span class="muted">معاملات الجولات الأخيرة ستظهر هنا</span></div>
+  </section>
+  <section class="panel" style="margin-top:14px">
+   <div class="section-title">سجل الجولات</div><div class="history-list" id="history"><div class="empty">لا توجد جولات بعد. ابدأ جولة تجريبية لعرض النتائج.</div></div>
+  </section>
+ </div>
+ <div class="right-col">
+  <section class="panel">
+   <div class="balance-line">
+    <div><div class="muted">رصيدك التجريبي</div><div class="balance"><span id="balance">1,000.00</span> <small id="symbol">$</small></div></div>
+    <div class="state"><div class="muted">حالة اللعبة</div><strong id="stateLabel">جاهزة</strong></div>
+   </div>
+   <label class="label" for="currency">عملة العرض التجريبية</label>
+   <select id="currency"><option value="USD">دولار أمريكي — USD ($)</option><option value="ILS">شيكل — ILS (₪)</option><option value="EUR">يورو — EUR (€)</option></select>
+   <div class="two">
+    <div><label class="label" for="stake">قيمة المشاركة</label><input id="stake" type="number" min="0.01" step="0.01" value="5.00" inputmode="decimal"></div>
+    <div><label class="label" for="auto">السحب التلقائي</label><select id="auto"><option value="off">إيقاف</option><option value="1.5">1.50x</option><option value="2">2.00x</option><option value="3">3.00x</option><option value="5">5.00x</option></select></div>
+   </div>
+   <div class="quick"><button data-add="2">+2</button><button data-add="5">+5</button><button data-add="10">+10</button><button id="half">نصف الرصيد</button></div>
+   <button class="btn start" id="start">بدء الجولة</button>
+   <button class="btn cash" id="cash" disabled>سحب الرصيد التجريبي</button>
+   <button class="btn secondary" id="reset">إعادة ضبط الرصيد التجريبي</button>
+   <p class="smallnote">هذه لعبة تجريبية محلية تستخدم رصيدًا افتراضيًا. العملة المختارة تغيّر تنسيق العرض فقط ولا تجري تحويلًا بسعر الصرف. لا يوجد اتصال بحساب 1xBet أو نظام أموال حقيقية.</p>
+  </section>
+  <section class="panel">
+   <div class="section-title">معلومات الجولة</div>
+   <div class="balance-line"><span class="muted">قيمة المشاركة</span><strong id="roundStake">—</strong></div>
+   <div class="balance-line" style="margin-top:12px"><span class="muted">معامل السحب</span><strong id="roundCashout">—</strong></div>
+   <div class="balance-line" style="margin-top:12px"><span class="muted">النتيجة</span><strong id="roundResult">—</strong></div>
+  </section>
+ </div>
+</div>
+<div class="footer">Crash Flight · Demo build<br>النموذج لا يمثل لعبة معتمدة، ولا يتصل بخدمات المراهنة أو الأرصدة الحقيقية.</div>
+</div>
+<script>
+(()=>{"use strict";
+const KEY="crashFlightCompleteDemo1";
+const currencies={USD:{locale:"en-US",symbol:"$",code:"USD"},ILS:{locale:"he-IL",symbol:"₪",code:"ILS"},EUR:{locale:"de-DE",symbol:"€",code:"EUR"}};
+let stored={};try{stored=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){}
+let currency=currencies[stored.currency]?stored.currency:"USD";
+let balance=Number.isFinite(stored.balance)&&stored.balance>=0?stored.balance:1000;
+let history=Array.isArray(stored.history)?stored.history.slice(0,10):[];
+let past=Array.isArray(stored.past)?stored.past.slice(0,10):[];
+let roundNo=Number(stored.roundNo)||0,active=false,cashed=false,stake=0,multiplier=1,crashAt=0,timer=null,started=0;
+const $=id=>document.getElementById(id);
+const fmt=n=>new Intl.NumberFormat(currencies[currency].locale,{minimumFractionDigits:2,maximumFractionDigits:2}).format(n);
+const cash=n=>fmt(n)+" "+currencies[currency].symbol;
+function persist(){try{localStorage.setItem(KEY,JSON.stringify({currency,balance,history,past,roundNo}))}catch(e){}}
+function renderBalance(){$("balance").textContent=fmt(balance);$("symbol").textContent=currencies[currency].symbol;renderHistory();renderPast();persist()}
+function renderHistory(){
+ if(!history.length){$("history").innerHTML='<div class="empty">لا توجد جولات بعد. ابدأ جولة تجريبية لعرض النتائج.</div>';return}
+ $("history").innerHTML=history.slice(0,10).map(r=>`<div class="history-item"><div><div class="hist-name">الجولة #${r.id} · ${r.won?"سحب ناجح":"انتهت الرحلة"}</div><div class="hist-sub">المعامل النهائي ${Number(r.mult).toFixed(2)}x · مشاركة ${cash(r.stake)}</div></div><div class="hist-value ${r.won?"win":"loss"}">${r.won?"+"+cash(r.profit):"−"+cash(r.stake)}</div></div>`).join("");
+}
+function renderPast(){
+ if(!past.length){$("pastRounds").innerHTML='<span class="muted">معاملات الجولات الأخيرة ستظهر هنا</span>';return}
+ $("pastRounds").innerHTML=past.slice(0,10).map(n=>`<span class="past-chip ${n<1.5?"low":n<2.5?"mid":""}">${Number(n).toFixed(2)}x</span>`).join("");
+}
+function setState(s){$("stateLabel").textContent=s}
+function movePlane(m){const p=Math.min(1,Math.max(0,(m-1)/5));$("plane").style.left=(10+p*70)+"%";$("plane").style.bottom=(13+p*52)+"%";$("plane").style.transform=`rotate(${-10-p*9}deg)`;$("curve").style.opacity=.2+p*.8}
+function stopControls() {active=false;clearInterval(timer);$("start").disabled=false;$("cash").disabled=true;$("stake").disabled=false;$("currency").disabled=false;$("auto").disabled=false;$("plane").classList.remove("flying")}
+function record(won,mult,profit){history.unshift({id:roundNo,won,stake,mult,profit});history=history.slice(0,10);past.unshift(mult);past=past.slice(0,10);renderHistory();renderPast();persist()}
+function crash(){multiplier=crashAt;$("multiplier").textContent=multiplier.toFixed(2)+"x";$("multiplier").classList.add("crashed");$("status").textContent="انتهت الرحلة!";$("roundLabel").textContent="انتهت الجولة #"+roundNo;$("roundCashout").textContent="—";$("roundResult").textContent="خسارة تجريبية";$("roundResult").className="loss";setState("انتهت");stopControls();$("plane").style.filter="grayscale(1)";if(!cashed)record(false,crashAt,0);renderBalance()}
+function startRound(){
+ if(active)return;const v=Number($("stake").value);
+ if(!Number.isFinite(v)||v<=0||v>balance){$("status").textContent="أدخل قيمة مشاركة صحيحة ضمن الرصيد";return}
+ stake=Math.round(v*100)/100;balance=Math.round((balance-stake)*100)/100;roundNo++;active=true;cashed=false;multiplier=1;
+ // Random demo-only outcome; not secure, audited, or suitable for real wagering.
+ crashAt=Math.max(1.05,1+Math.random()*7);started=Date.now();
+ $("multiplier").classList.remove("crashed");$("multiplier").style.color="";$("multiplier").textContent="1.00x";$("status").textContent="الطائرة في الجو...";$("roundLabel").textContent="الجولة #"+roundNo;
+ $("plane").style.filter="";$("plane").classList.add("flying");$("start").disabled=true;$("cash").disabled=false;$("stake").disabled=true;$("currency").disabled=true;$("auto").disabled=true;
+ $("roundStake").textContent=cash(stake);$("roundCashout").textContent="—";$("roundResult").textContent="الجولة جارية";$("roundResult").className="";setState("جارية");movePlane(1);renderBalance();
+ timer=setInterval(()=>{
+  const current=1+Math.pow((Date.now()-started)/1000,1.3)*.25;
+  if(current>=crashAt){crash();return}
+  multiplier=current;$("multiplier").textContent=multiplier.toFixed(2)+"x";movePlane(multiplier);
+  const auto= $("auto").value;
+  if(auto!=="off"&&multiplier>=Number(auto)){cashOut(true)}
+ },40);
+}
+function cashOut(automatic=false){
+ if(!active||cashed)return;cashed=true;const at=multiplier;const payout=Math.floor(stake*at*100)/100;const profit=Math.round((payout-stake)*100)/100;balance=Math.round((balance+payout)*100)/100;
+ $("status").textContent=automatic?"تم السحب التلقائي!":"تم السحب التجريبي!";$("multiplier").classList.remove("crashed");$("multiplier").style.color="var(--mint)";$("roundLabel").textContent="اكتملت الجولة #"+roundNo;$("roundCashout").textContent=at.toFixed(2)+"x";$("roundResult").textContent="+"+cash(profit);$("roundResult").className="win";setState("تم السحب");stopControls();record(true,at,profit);renderBalance()
+}
+$("start").addEventListener("click",startRound);$("cash").addEventListener("click",()=>cashOut(false));
+document.querySelectorAll("[data-add]").forEach(b=>b.addEventListener("click",()=>{if(active)return;const i=$("stake");i.value=(Math.max(0,Number(i.value)||0)+Number(b.dataset.add)).toFixed(2)}));
+$("half").addEventListener("click",()=>{if(!active)$("stake").value=(Math.floor(balance/2*100)/100).toFixed(2)});
+$("currency").value=currency;$("currency").addEventListener("change",()=>{if(active)return;currency=$("currency").value;renderBalance();$("roundStake").textContent="—";});
+$("reset").addEventListener("click",()=>{if(active)return;if(!confirm("إعادة الرصيد والسجل التجريبي إلى البداية؟"))return;balance=1000;history=[];past=[];roundNo=0;$("stake").value="5.00";$("auto").value="off";$("multiplier").classList.remove("crashed");$("multiplier").style.color="";$("multiplier").textContent="1.00x";$("status").textContent="جاهز للإقلاع؟";$("roundLabel").textContent="الجولة القادمة";$("roundStake").textContent="—";$("roundCashout").textContent="—";$("roundResult").textContent="—";setState("جاهزة");movePlane(1);renderBalance()});
+renderBalance();movePlane(1);
+})();
+</script>
+</body>
+</html>
